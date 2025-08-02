@@ -1,0 +1,53 @@
+MDFloatLayout:
+        size_hint: .85, .08
+        pos_hint: {"center_x": .5, "center_y": .38}
+        canvas:
+            Color:
+                rgb: (237/255, 238 , 238/255, 1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [20]
+        TextInput:
+            hint_text: "E-mail"
+            size_hint: 1, None
+            pos_hint: {"center_x": .5, "center_y": .5}
+            height: self.minimum_height
+            multiline: False
+            cursor_color: 96/255, 74/255, 215/255, 1
+            cursor_width: "2sp"
+            foreground_color: 96/255, 74/255, 215/255, 1
+            background_color: 0, 0, 0, 0
+            padding: 15
+            font_name: "Fontes/Montserrat-Regular.ttf"
+            font_size: "15sp"
+
+    MDFloatLayout:
+        size_hint: .85, .08
+        pos_hint: {"center_x": .5, "center_y": .28}
+        canvas:
+            Color:
+                rgb: (237/255, 238 , 238/255, 1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [20]
+        TextInput:
+            hint_text: "Password"
+            password: True
+            size_hint: 1, None
+            pos_hint: {"center_x": .5, "center_y": .5}
+            height: self.minimum_height
+            multiline: False
+            cursor_color: 96/255, 74/255, 215/255, 1
+            cursor_width: "2sp"
+            foreground_color: 96/255, 74/255, 215/255, 1
+            background_color: 0, 0, 0, 0
+            padding: 15
+            font_name: "Fontes/Montserrat-Regular.ttf"
+            font_size: "15sp"
+
+
+
+
+            COR (237/255, 238, 238/255, 1)
