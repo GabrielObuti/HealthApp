@@ -221,7 +221,27 @@ ScreenManager:
                             icon_left_color: 1, 1, 1, 1
                             icon_left_color_focus: 0.64, 0.64, 0.64, 0.8
                             text_color_focus: 1, 1, 1, 1
-                        
+            
+            
+            RelativeLayout:
+                size_hint: .85, None  
+                pos_hint: {"center_x": .5 , "center_y": .49}
+                
+                MDCheckbox:
+                    id: remember_check
+                    size_hint: None, None
+                    size: "24dp", "24dp"
+                    pos_hint: {"center_x": .09, "center_y": .49}
+                    
+                MDLabel:    
+                    text: "Remember me" 
+                    font_size: "13sp"
+                    valign: "center"
+                    pos_hint: {"x": 0.13} 
+                    
+                
+                    
+                                     
 
                 
                         
