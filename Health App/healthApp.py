@@ -300,7 +300,7 @@ ScreenManager:
             Color:
                 rgba: 1, 1, 1, 0.7                 
             Rectangle:
-                source:"gradiente3.png"
+                source:"gradient3.png"
                 size:self.size
                 pos:self.pos 
     
@@ -522,7 +522,7 @@ ScreenManager:
                 
                 MDBoxLayout:
                     orientation:"vertical"
-                    pos_hint: {"center_y": 0.65}
+                    pos_hint: {"center_y": 0.60}
                    
                     MDTopAppBar:
                         elevation: 0 
@@ -549,44 +549,106 @@ ScreenManager:
                             ripple_behavior: True
                             size_hint: None, None
                             size: dp(140), dp(140)
+                            md_bg_color: 0, 0.7, 0.5, 1
                             on_release: app.change_screen("weight")
                             
                             MDLabel:
                                 text:"Weight"
-                                halign: "center"
-                        
-                        MDCard:
-                            orientation:"vertical"
-                            ripple_behavior: True
-                            size_hint: None, None
-                            size: dp(140), dp(140)
-                            on_release: app.change_screen("menstrualCycle")
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "20sp"
+                                halign: "left"
+                                padding_x: dp(12)
+                                
+                                  
+                            FloatLayout:
+                                size_hint_y: None
+                                height: dp(100)
+                                Image:
+                                    source: "weight_bg.png"
+                                    allow_stretch: True
+                                    keep_ratio: True
+                                    size_hint: None, None
+                                    size: dp(110), dp(110)
+                                    pos_hint:{"center_x": 0.68, "center_y": 0.42}
                             
-                            MDLabel:
-                                text:"Menstrual Cycle"
-                                halign: "center" 
                         
                         MDCard:
                             orientation:"vertical"
                             ripple_behavior: True
                             size_hint: None, None
                             size: dp(140), dp(140)
+                            md_bg_color: 0, 0.7, 0.5, 1
                             on_release: app.change_screen("water")
                             
                             MDLabel:
                                 text:"Water"
-                                halign: "center"  
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "20sp"
+                                halign: "left"
+                                padding_x: dp(12)
+                        
+                            FloatLayout:
+                                size_hint_y: None
+                                height: dp(100)
+                                Image:
+                                    source: "water_bg.png"
+                                    allow_stretch: True
+                                    keep_ratio: True
+                                    size_hint: None, None
+                                    size: dp(70), dp(70)
+                                    pos_hint:{"center_x": 0.7, "center_y": 0.45}
+                        
+                        MDCard:
+                            orientation:"vertical"
+                            ripple_behavior: True
+                            size_hint: None, None
+                            size: dp(140), dp(140)
+                            md_bg_color: 0, 0.7, 0.5, 1
+                            on_release: app.change_screen("menstrualCycle")
+                            
+                            MDLabel:
+                                text:"Menstrual Cycle" 
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "20sp"
+                                halign: "left"
+                                padding_x: dp(12) 
+                                
+                            FloatLayout:
+                                size_hint_y: None
+                                height: dp(80)
+                                Image:
+                                    source: "menstrual_bg.png"
+                                    allow_stretch: True
+                                    keep_ratio: True
+                                    size_hint: None, None
+                                    size: dp(65), dp(65)
+                                    pos_hint:{"center_x": 0.68, "center_y": 0.53}
                                 
                         MDCard:
                             orientation:"vertical"
                             ripple_behavior: True
                             size_hint: None, None
                             size: dp(140), dp(140)
+                            md_bg_color: 0, 0.7, 0.5, 1
                             on_release: app.change_screen("medications")
                             
                             MDLabel:
                                 text:"Medications"
-                                halign: "center" 
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "20sp"
+                                halign: "left"
+                                padding_x: dp(12)
+                                
+                            FloatLayout:
+                                size_hint_y: None
+                                height: dp(100)
+                                Image:
+                                    source: "medicine_bg.png"
+                                    allow_stretch: True
+                                    keep_ratio: True
+                                    size_hint: None, None
+                                    size: dp(60), dp(60)
+                                    pos_hint:{"center_x": 0.68, "center_y": 0.38}
                    
                     MDCarousel:
                         id:carousel_area
@@ -604,27 +666,15 @@ ScreenManager:
                             radius: [15, 15, 15, 15]
                             padding: dp(20)
                             MDLabel:
-                                text:"First Test 123"
+                                text:"Regular exercise is the key to staying healthy and happy!"
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "18sp" 
                                 theme_text_color: "Custom"
                                 text_color: 1, 1, 1, 1
-                                font_style: "H6"
                             MDLabel:
-                                text: "Latest news about my first test"
-                                theme_text_color: "Custom"
-                                text_color: 1, 1, 1, 1
-                                
-                        MDCard:
-                            orientation: "vertical"
-                            md_bg_color: 0, 0.6, 0, 1
-                            radius: [15, 15, 15, 15]
-                            padding: dp(20)
-                            MDLabel:
-                                text:"First Test 123"
-                                theme_text_color: "Custom"
-                                text_color: 1, 1, 1, 1
-                                font_style: "H6"
-                            MDLabel:
-                                text: "Latest news about my first test"
+                                text: "- Stay active, stay happy!"
+                                font_size: "12sp" 
+                                font_name: "Fontes/Poppins-Medium.ttf"
                                 theme_text_color: "Custom"
                                 text_color: 1, 1, 1, 1
                                 
@@ -634,22 +684,44 @@ ScreenManager:
                             radius: [15, 15, 15, 15]
                             padding: dp(20)
                             MDLabel:
-                                text:"First Test 123"
+                                text:"Water is essential for your organs to work properly!"
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "18sp"
                                 theme_text_color: "Custom"
                                 text_color: 1, 1, 1, 1
-                                font_style: "H6"
                             MDLabel:
-                                text: "Latest news about my first test"
+                                text: "- Stay hydrated, stay healthy!"
+                                font_size: "12sp" 
+                                font_name: "Fontes/Poppins-Medium.ttf"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                
+                        MDCard:
+                            orientation: "vertical"
+                            md_bg_color: 0, 0.6, 0, 1
+                            radius: [15, 15, 15, 15]
+                            padding: dp(20)
+                            MDLabel:
+                                text:"Regular checkups with a doctor can prevent serious health problems!"
+                                font_name: "Fontes/Roboto-Bold.ttf"
+                                font_size: "16sp"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                            MDLabel:
+                                text: "- Stay checked, stay safe!"
+                                font_size: "12sp" 
+                                font_name: "Fontes/Poppins-Medium.ttf"
                                 theme_text_color: "Custom"
                                 text_color: 1, 1, 1, 1
                         
                     MDBoxLayout:
                         id: dots_area
                         orientation: "horizontal"
-                        spacing: dp(10)
+                        spacing: dp(15)
                         size_hint_y: None
-                        height: "20dp"
-                        pos_hint: {"center_x": 0.5}
+                        height: "24dp"
+                        width: carousel_area.width 
+                        pos_hint: {"center_x": 0.89}
                     
         MDNavigationDrawer:
             id: nav_drawer
@@ -722,6 +794,7 @@ class LoginPage(MDApp):
                 theme_text_color = "Custom",
                 text_color = (0.7, 0.7, 0.7, 1)
             )
+            dot.font_size = "16sp"
             dots_area.add_widget(dot)
             self.dots.append(dot)
 
