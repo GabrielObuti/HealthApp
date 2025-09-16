@@ -23,6 +23,7 @@ ScreenManager:
     LoginScreen:
     RegisterScreen:
     MainMenuScreen:
+    WeightScreen:
     
 <MenuScreen>:
     name: "Menu"
@@ -525,7 +526,7 @@ ScreenManager:
                     pos_hint: {"center_y": 0.60}
                    
                     MDTopAppBar:
-                        elevation: 0 
+                        elevation: 1 
                         md_bg_color: 1, 1, 1, 1
                         
                         
@@ -766,9 +767,250 @@ ScreenManager:
                             icon: "help-circle"           
             
             
-    
-    
-    
+<WeightScreen>
+    name: "weight"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Weight Tracking"
+            elevation: 2
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            
+        ScrollView:
+        
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                padding: dp(20), dp(20), dp(20), dp(20)  
+                spacing: dp(20)
+                
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    spacing: dp(20)
+                    size_hint_y: None
+                    height: dp(60)
+        
+                    MDCard:
+                        size_hint_x: None
+                        width: dp(100)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        radius: [8]
+                        MDLabel:
+                            text: "Height"
+                            halign: "center"
+                            valign: "center"
+        
+                    MDCard:
+                        md_bg_color: 1, 1, 1, 1
+                        radius: [8]
+                        padding: dp(10)
+        
+                        MDTextField:
+                            id: height_field
+                            hint_text: "  Insert your height"
+                            disable_hint_text: True 
+                            input_filter: "float"
+                            mode: "rectangle"
+                            size_hint_y: None
+                            height: dp(40)             
+                            pos_hint: {"center_y": 0.5}
+                            
+                            line_color_normal: 0.7, 0.7, 0.5, 1   
+                            line_color_focus: 0, 0.7, 0.5, 1
+                            
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    spacing: dp(20)
+                    size_hint_y: None
+                    height: dp(60)
+        
+                    MDCard:
+                        size_hint_x: None
+                        width: dp(100)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        radius: [8]
+                        MDLabel:
+                            text: "Weight"
+                            halign: "center"
+                            valign: "center"
+        
+                    MDCard:
+                        md_bg_color: 1, 1, 1, 1
+                        radius: [8]
+                        padding: dp(10)
+        
+                        MDTextField:
+                            id: weight_field
+                            hint_text: "  Insert your weight"
+                            disable_hint_text: True 
+                            input_filter: "float"
+                            mode: "rectangle"
+                            size_hint_y: None
+                            height: dp(40)             
+                            pos_hint: {"center_y": 0.5}
+                            
+                            line_color_normal: 0.7, 0.7, 0.5, 1   
+                            line_color_focus: 0, 0.7, 0.5, 1
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    spacing: dp(20)
+                    size_hint_y: None
+                    height: dp(60)
+        
+                    MDRaisedButton:
+                        text: "Calcular"
+                        pos_hint: {"center_x": 0.5}
+                        size_hint_x: 1
+                        md_bg_color: 0, 0.7, 0.5, 0.98
+                        on_release: app.calculate_weight()
+                        
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    spacing: dp(20)
+                    size_hint_y: None
+                    height: dp(150)
+                    
+                    Image:
+                        source: "weight_bg.png"
+                        allow_stretch: True
+                        keep_ratio: True
+                        size_hint: None, None
+                        size: dp(170), dp(170)
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        size_hint_y: None
+                        height: dp(100)
+                        pos_hint: {"center_y": 0.65}
+                        
+                        MDLabel:
+                            text: "Your IMC is: "
+                            font_size: "12sp" 
+                            font_name: "Fontes/Poppins-Medium.ttf"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            halign: "left"
+                            valign: "top" 
+                            
+                        MDLabel:
+                            id: result_field
+                            text: ""
+                            font_size: "30sp" 
+                            font_name: "Fontes/Poppins-Medium.ttf"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            halign: "left"
+                            valign: "middle" 
+                  
+                       
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: dp(10)       
+                    padding: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDLabel:
+                        text: "Classification table (IMC)"
+                        halign: "center"
+                        font_style: "H6"
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 1
+                    
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(10)
+                        row_default_height: dp(30)
+                        size_hint_y: None
+                        height: self.minimum_height
+                        col_default_width: dp(150)
+                        col_force_default: True
+                        
+                        MDLabel:
+                            text: "Classification"
+                            bold: True
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text:"IMC"
+                            bold: True
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                        MDLabel: 
+                            text:"Underweight"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text: "< 18,5"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                        MDLabel:
+                            text:"Healthy"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text: "18,5 ~ 24,9"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                        MDLabel:
+                            text:"Overweight"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text: "25 ~ 29,9"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                        MDLabel:
+                            text: "Class 1 Obesity"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text: "30 ~ 34,9"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                        MDLabel:
+                            text: "Class 2 Obesity"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text: "35 ~  39,9"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                        MDLabel:
+                            text:"Class 3 Obesity"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        MDLabel:
+                            text: "> 40"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1                                          
+                    
+                                               
+                            
         
         
 """
@@ -835,12 +1077,32 @@ class LoginPage(MDApp):
         self.root.current = "main-menu"
 
 
-
-
     def change_screen(self, screen_name):
         self.root.transition = SlideTransition(direction="left")
         self.root.current = screen_name
 
+    def calculate_weight(self):
+        screen = self.root.get_screen("weight")
+
+        height = screen.ids.height_field.text
+        weight = screen.ids.weight_field.text
+
+        if not height or not weight:
+            print("Please, fill up the labels!")
+            return
+
+        try:
+            height = float(height)
+            weight = float(weight)
+
+            if height > 10:
+                height = height/100
+
+            imc = weight/(height * height)
+
+            screen.ids.result_field.text = f"{imc:.2f}"
+        except:
+            print("Invalid Values!")
 
 class MenuScreen(Screen):
     pass
@@ -857,6 +1119,9 @@ class MainMenuScreen(Screen):
             self.ids.nav_drawer.set_state("close")
         except AttributeError:
             pass
+
+class WeightScreen(Screen):
+    pass
 
 
 if __name__ == "__main__":
