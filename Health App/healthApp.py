@@ -773,11 +773,22 @@ ScreenManager:
     MDBoxLayout:
         orientation: "vertical"
         md_bg_color: 1, 1, 1, 1
-
+        
         MDTopAppBar:
             title: "Weight Tracking"
-            elevation: 2
+            elevation: 0
             left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+            
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)
             
         ScrollView:
         
@@ -820,6 +831,11 @@ ScreenManager:
                             
                             line_color_normal: 0.7, 0.7, 0.5, 1   
                             line_color_focus: 0, 0.7, 0.5, 1
+                            text_color_normal: 0, 0, 0, 1
+                            text_color_focus: 0, 0, 0, 1
+                            hint_text_color_normal: 0, 0, 0, 0.4
+                            hint_text_color_focus: 0, 0, 0, 1
+                            
                             
                 MDBoxLayout:
                     orientation: "horizontal"
@@ -854,6 +870,10 @@ ScreenManager:
                             
                             line_color_normal: 0.7, 0.7, 0.5, 1   
                             line_color_focus: 0, 0.7, 0.5, 1
+                            text_color_normal: 0, 0, 0, 1
+                            text_color_focus: 0, 0, 0, 1
+                            hint_text_color_normal: 0, 0, 0, 0.4
+                            hint_text_color_focus: 0, 0, 0, 1
 
                 MDBoxLayout:
                     orientation: "horizontal"
@@ -862,7 +882,7 @@ ScreenManager:
                     height: dp(60)
         
                     MDRaisedButton:
-                        text: "Calcular"
+                        text: "Calculate"
                         pos_hint: {"center_x": 0.5}
                         size_hint_x: 1
                         md_bg_color: 0, 0.7, 0.5, 0.98
@@ -879,7 +899,8 @@ ScreenManager:
                         allow_stretch: True
                         keep_ratio: True
                         size_hint: None, None
-                        size: dp(170), dp(170)
+                        size: dp(190), dp(190)
+                        pos_hint: {"center_y": 0.55}
                     
                     MDBoxLayout:
                         orientation: "vertical"
@@ -914,12 +935,49 @@ ScreenManager:
                     size_hint_y: None
                     height: self.minimum_height
                     
+                    Widget:
+                        size_hint_y: None
+                        height: dp(20)
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        size_hint_y: None
+                        height: dp(20)
+                        spacing: dp(5)
+                        padding:dp(20) 
+                        
+                
+                        MDIcon:
+                            icon: "chevron-down"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                
+                        MDLabel:
+                            text: "Scroll down"
+                            halign: "center"
+                            font_size: "20sp"
+                            font_name: "Fontes/Roboto-Bold.ttf"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                
+                        MDIcon:
+                            icon: "chevron-down"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        
+                    Widget:
+                        size_hint_y: None
+                        height: dp(50)
+                        
                     MDLabel:
                         text: "Classification table (IMC)"
                         halign: "center"
                         font_style: "H6"
                         theme_text_color: "Custom"
                         text_color: 0, 0, 0, 1
+                        padding: dp(0), dp(0), dp(0), dp(30)  
                     
                     MDGridLayout:
                         cols: 2
@@ -1126,3 +1184,6 @@ class WeightScreen(Screen):
 
 if __name__ == "__main__":
     LoginPage().run()
+
+
+"Note:  [padding_left, padding_top, padding_right, padding_bottom]"
