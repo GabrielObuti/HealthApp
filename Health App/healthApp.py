@@ -1,17 +1,25 @@
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivy.metrics import dp
+from kivy.properties import ListProperty
+from kivy.uix.image import Image
 from kivymd.app import MDApp
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.button import MDTextButton
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDTextButton, MDRaisedButton
 from kivymd.uix.button import MDFillRoundFlatButton
 from kivy.uix.screenmanager import SlideTransition
+from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel, MDIcon
+from kivymd.uix.pickers import MDDatePicker
 from kivymd.uix.textfield import MDTextField
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.screen import MDScreen
 from kivymd.icon_definitions import md_icons
+from kivy.uix.gridlayout import GridLayout
+from kivymd.uix.label import MDLabel
 from kivy.clock import Clock
 
 Window.size = (350, 600)
@@ -24,6 +32,13 @@ ScreenManager:
     RegisterScreen:
     MainMenuScreen:
     WeightScreen:
+    WaterScreen:
+    MenstrualScreen:
+    MedicationsScreen:
+    VitaminsScreen:
+    GenericScreen:
+    MineralScreen:
+    HomemadeScreen:
     
 <MenuScreen>:
     name: "Menu"
@@ -831,8 +846,10 @@ ScreenManager:
                             
                             line_color_normal: 0.7, 0.7, 0.5, 1   
                             line_color_focus: 0, 0.7, 0.5, 1
+                            
                             text_color_normal: 0, 0, 0, 1
                             text_color_focus: 0, 0, 0, 1
+                            
                             hint_text_color_normal: 0, 0, 0, 0.4
                             hint_text_color_focus: 0, 0, 0, 1
                             
@@ -870,8 +887,10 @@ ScreenManager:
                             
                             line_color_normal: 0.7, 0.7, 0.5, 1   
                             line_color_focus: 0, 0.7, 0.5, 1
+                            
                             text_color_normal: 0, 0, 0, 1
                             text_color_focus: 0, 0, 0, 1
+                            
                             hint_text_color_normal: 0, 0, 0, 0.4
                             hint_text_color_focus: 0, 0, 0, 1
 
@@ -921,7 +940,7 @@ ScreenManager:
                             id: result_field
                             text: ""
                             font_size: "30sp" 
-                            font_name: "Fontes/Poppins-Medium.ttf"
+                            font_name: "Fontes/Montserrat-Medium.ttf"
                             theme_text_color: "Custom"
                             text_color: 0, 0, 0, 1
                             halign: "left"
@@ -1067,10 +1086,1222 @@ ScreenManager:
                             theme_text_color: "Custom"
                             text_color: 0, 0, 0, 1                                          
                     
-                                               
+
+<WaterScreen>
+    name: "water" 
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+        
+        MDTopAppBar:
+            title: "Water Tracking"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+            
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+        ScrollView:         
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(15)
+                spacing: dp(20)
+                
+                MDBoxLayout:
+                    orientation:"vertical"
+                    size_hint: 1, None
+                    adaptive_height: True 
+                    height: self.minimum_height + dp(60)
+                    pos_hint: {"center_x": 0.5}
+                    padding: dp(10), dp(0), dp(10), dp(0)
+                    spacing: dp(40)
+                
+                    canvas.before:
+                        Color:
+                            rgba: 0.1176, 0.8706, 0.9608, 0.8
+                        Line:
+                            width: 1.5
+                            rectangle: (self.x, self.y, self.width, self.height)
                             
+                    Widget:
+                        size_hint_y: None
+                        height: dp(10)
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        size_hint_y: None
+                        pos_hint: {"center_x": .5}
+                        spacing: dp(20)
+                        
+                        MDLabel:
+                            text: "Drinking"
+                            font_size: "20sp" 
+                            font_name: "Fontes/Montserrat-Medium.ttf"
+                            bold: True
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                    
+                        MDIcon:
+                            icon: "drinking-water.png"          
+                            halign: "center"       
+                            size_hint: None, None
+                            size: dp(64), dp(64)
+                            font_size: "70sp"   
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 1, 1
+                            pos_hint: {"center_x": .5} 
+                            
+                        MDLabel:
+                            text: "Water"
+                            font_size: "20sp" 
+                            font_name: "Fontes/Montserrat-Medium.ttf"
+                            bold: True
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                        
+                    MDCard:
+                        md_bg_color: 1, 1, 1, 1
+                        
+                        MDTextField:
+                            id: age_water_field
+                            hint_text:"  Insert your age"
+                            disable_hint_text: True
+                            input_filter: "float"
+                            mode: "rectangle"
+                            size_hint_y: None
+                            height: dp(48)
+                            
+                            line_color_normal: 0.196, 0.243, 0.459, 0.60
+                            line_color_focus: 0.0078, 0.1803, 0.9254, 1
+                            
+                            text_color_normal: 0, 0, 0, 1
+                            text_color_focus: 0, 0, 0, 1
+                            
+                            hint_text_color_normal: 0, 0, 0, 0.4
+                            hint_text_color_focus: 0, 0, 0, 1
+                    
+                    MDCard:
+                        md_bg_color: 1, 1, 1, 1
+                        
+                        MDTextField:
+                            id: weight_water_field
+                            hint_text: "  Insert your weight"
+                            disable_hint_text: True
+                            input_filter: "float"
+                            mode: "rectangle"
+                            size_hint_y: None
+                            height: dp(48)
+                            
+                            line_color_normal: 0.196, 0.243, 0.459, 0.60
+                            line_color_focus: 0.0078, 0.1803, 0.9254, 1
+                            
+                            text_color_normal: 0, 0, 0, 1
+                            text_color_focus: 0, 0, 0, 1
+                        
+                            hint_text_color_normal: 0, 0, 0, 0.4
+                            hint_text_color_focus: 0, 0, 0, 1
+                        
+                        
+                    MDRaisedButton:
+                        text: "Calculate"
+                        pos_hint:{"center_x": .5}
+                        size_hint_y: None
+                        height: dp(60)
+                        on_release: app.water_calculate()
+                        
+                    MDLabel:
+                        id: water_result_field
+                        text: "Results Here"
+                        text_color: 0, 0, 0, 1
+                        font_size: "20sp" 
+                        font_name: "Fontes/Montserrat-Medium.ttf"
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        size_hint_y: None
+                        height: dp(30)   
+                        padding: dp(0), dp(0), dp(0), dp(20) 
+                                            
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: dp(35)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(30)
+                        
+                        MDIcon:
+                            icon: "water-outline"
+                            size_hint: None, None
+                            size: dp(24), dp(24)
+                            theme_text_color: "Custom"
+                            text_color: 0, 0.5, 1, 1
+                        
+                        MDLabel:
+                            text: "Drinking enough water is essential for keeping your body healthy."
+                            halign: "left"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(25)
+                        
+                        MDIcon:
+                            icon: "water-outline"
+                            size_hint: None, None
+                            size: dp(24), dp(24)
+                            theme_text_color: "Custom"
+                            text_color: 0, 0.5, 1, 1
+                        
+                        MDLabel:
+                            text: "It helps regulate body temperature, transport nutrients, and remove toxins."
+                            halign: "left"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(30)
+                        
+                        MDIcon:
+                            icon: "water-outline"
+                            size_hint: None, None
+                            size: dp(24), dp(24)
+                            theme_text_color: "Custom"
+                            text_color: 0, 0.5, 1, 1
+                        
+                        MDLabel:
+                            text: "Staying hydrated improves concentration, mood, and physical performance."
+                            halign: "left"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(30)
+                        
+                        MDIcon:
+                            icon: "water-outline"
+                            size_hint: None, None
+                            size: dp(24), dp(24)
+                            theme_text_color: "Custom"
+                            text_color: 0, 0.5, 1, 1
+                        
+                        MDLabel:
+                            text: "Proper hydration supports healthy skin, digestion, and joint lubrication."
+                            halign: "left"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                    MDBoxLayout:
+                        orientation: "horizontal"
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(25)
+                        
+                        MDIcon:
+                            icon: "water-outline"
+                            size_hint: None, None
+                            size: dp(24), dp(24)
+                            theme_text_color: "Custom"
+                            text_color: 0, 0.5, 1, 1
+                        
+                        MDLabel:
+                            text: "Make water your daily habit to maintain balance and overall well-being."
+                            halign: "left"
+                            theme_text_color: "Custom"
+                            text_color: 0, 0, 0, 1
+                            
+                    
+<MenstrualScreen>
+    name: "menstrualCycle" 
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+        
+        MDTopAppBar:
+            title: "Period Tracking"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+            
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+        ScrollView:         
+            MDBoxLayout: 
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(10)
+                
+                
+                MDTextField:
+                    id: last_period
+                    hint_text: "Last date of period(dd/mm/yyyy)"
+                    
+                    line_color_normal: 0.196, 0.243, 0.459, 0.60
+                    line_color_focus: 0.9647, 0.0588, 0.3333, 0.8
+
+                    text_color_normal: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                
+                    hint_text_color_normal: 0, 0, 0, 0.4
+                    hint_text_color_focus: 0, 0, 0, 1
+                    
+                MDTextField:
+                    id: duration
+                    hint_text: "Menstruation duration(days)"
+                    input_filter: "int"
+                    
+                    line_color_normal: 0.196, 0.243, 0.459, 0.60
+                    line_color_focus: 0.9647, 0.0588, 0.3333, 0.8
+
+                    text_color_normal: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                
+                    hint_text_color_normal: 0, 0, 0, 0.4
+                    hint_text_color_focus: 0, 0, 0, 1
+                    
+                MDTextField:
+                    id: cycle
+                    hint_text: "Cycle Lenght"
+                    input_filter: "int"
+                    
+                    line_color_normal: 0.196, 0.243, 0.459, 0.60
+                    line_color_focus: 0.9647, 0.0588, 0.3333, 0.8
+
+                    text_color_normal: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                
+                    hint_text_color_normal: 0, 0, 0, 0.4
+                    hint_text_color_focus: 0, 0, 0, 1
+                    
+                MDRaisedButton:
+                    text: "Calculate"
+                    pos_hint: {"center_x": .5}
+                    on_release: app.calculate_cycle()
+                
+                MDBoxLayout:
+                    id: month_bar
+                    size_hint_y: None
+                    height: 0       
+                    opacity: 0 
+                    md_bg_color: 0.95, 0.8, 0.8, 1
+
+                    MDLabel:
+                        id: month_label
+                        text: ""
+                        halign: "center"
+                        font_style: "H5"
+                        size_hint_y: None
+                        height: dp(50)
+                        theme_text_color: "Custom"
+                        font_name: "Fontes/Poppins-Bold.ttf"
+                        text_color_normal: 0, 0, 0, 1
+                    
+                GridLayout:
+                    id: week_header
+                    cols: 7
+                    size_hint_y: None
+                    row_default_height: dp(40)
+                    row_force_default: True
+                    height: self.minimum_height
+            
+                    canvas.before:
+                        Color:
+                            rgba: 0.95, 0.8, 0.8, 1   
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size 
+                    
+                GridLayout:
+                    id: calendar_grid
+                    cols: 7
+                    spacing: dp(5)
+                    padding: dp(10)
+                    size_hint_y: None
+                    row_default_height: dp(40)  
+                    row_force_default: True  
+                    height: self.minimum_height
+                    
+                    canvas.before:
+                        Color:
+                            rgba: root.calendar_color
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+
+<MedicationsScreen>
+    name: "medications" 
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Period Tracking"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+
+        ScrollView:
+            MDGridLayout:
+                cols:2
+                adaptive_size: True
+                spacing: dp(20)
+                padding: dp(20)
+                pos_hint:{"center_x": 0.5}
+                size_hint_y: None
+                height: self.minimum_height
+                
+                MDCard:
+                    orientation:"vertical"
+                    ripple_behavior: True
+                    size_hint: None, None
+                    size: dp(140), dp(140)
+                    md_bg_color: 0, 0.7, 0.5, 1
+                    on_release: app.change_screen("vitamin")
+                    
+                    FloatLayout:
+                        size_hint_y: None
+                        height: dp(100)
+                        Image:
+                            source: "pills.png"
+                            allow_stretch: True
+                            keep_ratio: True
+                            size_hint: None, None
+                            size: dp(75), dp(75)
+                            pos_hint:{"center_x": 0.50, "center_y": 0.40}
+                    
+                    MDLabel:
+                        text:"Generic Medicine"
+                        font_name: "Fontes/Roboto-Bold.ttf"
+                        font_size: "14sp"
+                        halign: "center"
+                        padding_x: dp(12)
+                    
+                
+                MDCard:
+                    orientation:"vertical"
+                    ripple_behavior: True
+                    size_hint: None, None
+                    size: dp(140), dp(140)
+                    md_bg_color: 0, 0.7, 0.5, 1
+                    on_release: app.change_screen("generic")
+                    
+                    FloatLayout:
+                        size_hint_y: None
+                        height: dp(100)
+                        Image:
+                            source: "vitamin.png"
+                            allow_stretch: True
+                            keep_ratio: True
+                            size_hint: None, None
+                            size: dp(70), dp(70)
+                            pos_hint:{"center_x": 0.58, "center_y": 0.42}
+                    
+                    MDLabel:
+                        text:"Vitamins"
+                        font_name: "Fontes/Roboto-Bold.ttf"
+                        font_size: "16sp"
+                        halign: "center"
+                        padding_x: dp(12)
+                
+                
+                MDCard:
+                    orientation:"vertical"
+                    ripple_behavior: True
+                    size_hint: None, None
+                    size: dp(140), dp(140)
+                    md_bg_color: 0, 0.7, 0.5, 1
+                    on_release: app.change_screen("mineral")
+                    
+                    FloatLayout:
+                        size_hint_y: None
+                        height: dp(100)
+                        Image:
+                            source: "mineral.png"
+                            allow_stretch: True
+                            keep_ratio: True
+                            size_hint: None, None
+                            size: dp(70), dp(70)
+                            pos_hint:{"center_x": 0.52, "center_y": 0.38}
+                            padding_x: dp(12) 
+                    
+                    MDLabel:
+                        text:"Mineral" 
+                        font_name: "Fontes/Roboto-Bold.ttf"
+                        font_size: "18sp"
+                        halign: "center"
+                        padding_x: dp(12) 
+                        
+                        
+                MDCard:
+                    orientation:"vertical"
+                    ripple_behavior: True
+                    size_hint: None, None
+                    size: dp(140), dp(140)
+                    md_bg_color: 0, 0.7, 0.5, 1
+                    on_release: app.change_screen("homemade")
+                    
+                    FloatLayout:
+                        size_hint_y: None
+                        height: dp(100)
+                        Image:
+                            source: "homemade.png"
+                            allow_stretch: True
+                            keep_ratio: True
+                            size_hint: None, None
+                            size: dp(60), dp(60)
+                            pos_hint:{"center_x": 0.54, "center_y": 0.38}
+                    
+                    MDLabel:
+                        text:"Homemade"
+                        font_name: "Fontes/Roboto-Bold.ttf"
+                        font_size: "18sp"
+                        halign: "center"
+                        padding_x: dp(12)
+                        
+            
+<GenericScreen>
+    name: "generic"
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Vitamins"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+
+        ScrollView:
+            BoxLayout:
+                orientation: "vertical"
+                padding: dp(10)
+                spacing: dp(10)
+                adaptive_height: True
+            
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
         
         
+<VitaminsScreen>
+    name: "vitamin"
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Vitamins"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+
+        ScrollView:
+            BoxLayout:
+                orientation: "vertical"
+                padding: dp(10)
+                spacing: dp(10)
+                adaptive_height: True
+            
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        
+                        
+<MineralScreen>
+    name: "mineral"
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Vitamins"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+
+        ScrollView:
+            BoxLayout:
+                orientation: "vertical"
+                padding: dp(10)
+                spacing: dp(10)
+                adaptive_height: True
+            
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        
+                        
+<HomemadeScreen>
+    name: "homemade"
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 1, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Vitamins"
+            elevation: 0
+            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            padding: dp(0), dp(0), dp(45), dp(0) 
+            md_bg_color: 0, 0.7, 0.5, 1
+            specific_text_color: 1, 1, 1, 1
+
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1  
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, dp(1)  
+
+        ScrollView:
+            BoxLayout:
+                orientation: "vertical"
+                padding: dp(10)
+                spacing: dp(10)
+                adaptive_height: True
+            
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        
+                MDCard:
+                    orientation: "horizontal"
+                    size_hint_x: 1
+                    height: self.parent.height * 0.12
+                    radius: [15, 15, 15, 15]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: dp(10)
+                    ripple_behavior: True
+                    elevation: 1
+                    shadow_radius: 15                   
+                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+
+                    Image:
+                        source: "pills.png"
+                        size_hint: None, None
+                        size: self.parent.height * 0.3, self.parent.height * 0.3
+                        pos_hint: {"center_y": 0.5}
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        padding: dp(10), 0
+                        MDLabel:
+                            text: "Aspirin"
+                            font_style: "H6"
+                            halign: "left"
+                            theme_text_color: "Custom"
+
+                    MDIconButton:
+                        icon: "arrow-right"
+                        theme_icon_color: "Custom"
+                        icon_color: 1, 1, 1, 1
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        md_bg_color: 0, 0.7, 0.5, 1
+                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
 """
 
 class LoginPage(MDApp):
@@ -1078,11 +2309,14 @@ class LoginPage(MDApp):
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "BlueGray"
 
+        self.menstrual_days = []
+
         root = Builder.load_string(kv)
         Clock.schedule_once(self.start_carousel, 0)
+
         return root
 
-    def start_carousel(self,dt):
+    def start_carousel(self, dt):
         carousel = self.root.get_screen("main-menu").ids.carousel_area
         dots_area = self.root.get_screen("main-menu").ids.dots_area
         dots_area.clear_widgets()
@@ -1110,7 +2344,7 @@ class LoginPage(MDApp):
                 dot.icon = "checkbox-blank-circle-outline"
                 dot.text_color = (0.7, 0.7, 0.7, 1)
 
-    def next_slide(self,carousel):
+    def next_slide(self, carousel):
         if carousel.index < len(carousel.slides) - 1:
             carousel.load_next()
         else:
@@ -1162,6 +2396,144 @@ class LoginPage(MDApp):
         except:
             print("Invalid Values!")
 
+
+    def water_calculate(self):
+        screen = self.root.get_screen("water")
+
+        age = screen.ids.age_water_field.text
+        weight = screen.ids.weight_water_field.text
+
+        if not age or not weight:
+            print("Please fill up the labels!")
+
+        try:
+            age = int(age)
+            weight = int(weight)
+            total = 0
+
+            if age <= 17:
+                total = 40 * weight
+            elif age >= 18 or age <= 55:
+                total = 35 * weight
+            elif age >= 56 or age <= 65:
+                total = 30 * weight
+            elif age >= 66:
+                total = 25 * weight
+
+            if total >= 1000:
+                total = total/1000
+                screen.ids.water_result_field.text = f"{total} Liters"
+            elif total < 1000:
+                screen.ids.water_result_field.text = f"{total} Mililiters"
+
+        except:
+            screen.ids.water_result_field.text = "Invalid values!"
+
+    def calculate_cycle(self):
+        from datetime import datetime, timedelta
+        screen = self.root.get_screen("menstrualCycle")
+
+        try:
+            last_period_str = screen.ids.last_period.text
+            duration = int(screen.ids.duration.text)
+            cycle = int(screen.ids.cycle.text)
+
+            last_period_date = datetime.strptime(last_period_str,"%d/%m/%Y")
+
+            next_period_start = last_period_date + timedelta(days=cycle)
+
+            self.menstrual_days = [
+                (next_period_start + timedelta(days=i)).day for i in range(duration)
+            ]
+
+            screen.ids.month_bar.height = dp(50)
+            screen.ids.month_bar.opacity = 1
+
+            screen.calendar_color = [1, 0.9, 0.9, 1]
+            self.show_calendar(next_period_start.year, next_period_start.month)
+
+        except Exception as e:
+            print("Error", e)
+
+    def show_calendar(self, year, month):
+        print("monstrando", year, month, "dias:", self.menstrual_days)
+        import calendar
+
+        screen = self.root.get_screen("menstrualCycle")
+        screen.ids.month_label.text = f"{calendar.month_name[month]} {year}"
+
+        month_days = calendar.monthcalendar(year, month)
+
+        screen.ids.week_header.clear_widgets()
+        screen.ids.calendar_grid.clear_widgets()
+
+        for d in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
+            screen.ids.week_header.add_widget(
+                MDLabel(text=d,
+                        halign="center",
+                        bold=True,
+                        theme_text_color="Custom",
+                        text_color=(0, 0, 0, 1))
+            )
+
+        for week in month_days:
+            for day in week:
+                if day == 0:
+                    screen.ids.calendar_grid.add_widget(
+                        MDLabel(text="", halign="center")
+                    )
+                elif day in self.menstrual_days:
+                    screen.ids.calendar_grid.add_widget(
+                        MDLabel(
+                            text=str(day),
+                            halign="center",
+                            theme_text_color="Custom",
+                            text_color=(1,0,0,1),
+                            font_name = "Fontes/Poppins-BoldItalic.ttf"
+                        )
+                    )
+                else:
+                    screen.ids.calendar_grid.add_widget(
+                        MDLabel(
+                            text=str(day),
+                            halign="center",
+                            theme_text_color="Custom",
+                            text_color=(0, 0, 0, 1),
+                            font_name="Fontes/Poppins-BoldItalic.ttf"
+                        )
+                    )
+
+        screen.ids.calendar_grid.height = screen.ids.calendar_grid.minimum_height
+
+    dialog = None
+
+    def show_medicine(self, name, description):
+        if not self.dialog:
+            content = BoxLayout(orientation="vertical", spacing=10, padding=10)
+
+            self.label_desc = MDLabel(
+                text=description,
+                halign="center",
+                theme_text_color="Secondary"
+            )
+            content.add_widget(self.label_desc)
+
+            self.dialog = MDDialog(
+                title=f"{name}",
+                type="custom",
+                content_cls=content,
+                buttons=[
+                    MDRaisedButton(text="Fechar", on_release=lambda x: self.dialog.dismiss())
+                ]
+            )
+        else:
+            self.dialog.title = f"{name}"
+            self.dialog.content_cls.children[0].text = description
+
+        self.dialog.open()
+
+
+
 class MenuScreen(Screen):
     pass
 
@@ -1179,6 +2551,28 @@ class MainMenuScreen(Screen):
             pass
 
 class WeightScreen(Screen):
+    pass
+
+class WaterScreen(Screen):
+    pass
+
+class MenstrualScreen(Screen):
+    calendar_color = ListProperty([0, 0, 0, 0])
+    pass
+
+class MedicationsScreen(Screen):
+    pass
+
+class GenericScreen(Screen):
+    pass
+
+class VitaminsScreen(Screen):
+    pass
+
+class MineralScreen(Screen):
+    pass
+
+class HomemadeScreen(Screen):
     pass
 
 
