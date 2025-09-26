@@ -161,20 +161,6 @@ ScreenManager:
             on_release:
                 self.md_bg_color = 76/255,168/255,35/255,0.9
                 app.ir_registro()
-                
-        MDFillRoundFlatButton:
-            text: "MENUZAO"
-            text_color: "white"
-            size_hint_x: "0.8"
-            height: "50dp"
-            pos_hint: {"center_x": .5, "center_y": .20}
-            font_name: "Fontes/Montserrat-Regular.ttf"
-            md_bg_color: 76/255,168/255,35/255,0.9
-            font_size: "20sp"
-            on_press: self.md_bg_color = 76/255,168/255,35/255,0.7
-            on_release:
-                self.md_bg_color = 76/255,168/255,35/255,0.9
-                app.ir_menuzao()
         
         MDLabel:    
             text: "Forgot your password?"
@@ -844,6 +830,7 @@ ScreenManager:
             
 <WeightScreen>
     name: "weight"
+    on_pre_enter: root.reset_fields()
 
     MDBoxLayout:
         orientation: "vertical"
@@ -1149,6 +1136,7 @@ ScreenManager:
 
 <WaterScreen>
     name: "water" 
+    on_pre_enter: root.reset_fields()
     
     MDBoxLayout:
         orientation: "vertical"
@@ -1397,6 +1385,7 @@ ScreenManager:
                     
 <MenstrualScreen>
     name: "menstrualCycle" 
+    on_pre_enter: root.reset_fields()
     
     MDBoxLayout:
         orientation: "vertical"
@@ -2492,9 +2481,9 @@ class LoginPage(MDApp):
 
             if total >= 1000:
                 total = total/1000
-                screen.ids.water_result_field.text = f"{total} Liters"
+                screen.ids.water_result_field.text = f"{total:.1f} Liters"
             elif total < 1000:
-                screen.ids.water_result_field.text = f"{total} Mililiters"
+                screen.ids.water_result_field.text = f"{total:.1f} Mililiters"
 
         except:
             screen.ids.water_result_field.text = "Invalid values!"
@@ -2659,13 +2648,29 @@ class MainMenuScreen(Screen):
             pass
 
 class WeightScreen(Screen):
+    def reset_fields(self):
+        self.ids.height_field.text = ""
+        self.ids.weight_field.text = ""
+        self.ids.result_field.text = ""
+
     pass
 
 class WaterScreen(Screen):
+    def reset_fields(self):
+        self.ids.age_water_field.text = ""
+        self.ids.weight_water_field.text = ""
+        self.ids.water_result_field.text = "Results Here"
+
     pass
 
 class MenstrualScreen(Screen):
     calendar_color = ListProperty([0, 0, 0, 0])
+
+    def reset_fields(self):
+        self.ids.last_period.text = ""
+        self.ids.duration.text = ""
+        self.ids.cycle.text = ""
+
     pass
 
 class MedicationsScreen(Screen):
