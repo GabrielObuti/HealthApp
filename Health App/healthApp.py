@@ -1,3 +1,4 @@
+import self
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.lang import Builder
@@ -21,8 +22,65 @@ from kivymd.icon_definitions import md_icons
 from kivy.uix.gridlayout import GridLayout
 from kivymd.uix.label import MDLabel
 from kivy.clock import Clock
+import sqlite3
+
 
 Window.size = (350, 600)
+
+class Database:
+    def __init__(self, db_name="users.db"):
+        self.conn = sqlite3.connect(db_name)
+        self.cursor = self.conn.cursor()
+        self.create_table()
+
+    def create_table(self):
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                email TEXT UNIQUE,
+                phone TEXT,
+                password TEXT
+            )
+        """)
+
+        self.cursor.execute("""
+                CREATE TABLE IF NOT EXISTS preferences (
+                    id INTEGER PRIMARY KEY,
+                    email TEXT,
+                    remember INTEGER
+                )
+            """)
+
+        self.conn.commit()
+
+    def register_user(self, name, email, phone, password):
+        try:
+            self.cursor.execute(
+                "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)",
+                (name, email, phone, password)
+            )
+            self.conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
+
+    def login_user(self, email, password):
+        self.cursor.execute(
+            "SELECT * FROM users WHERE email=? AND password=?",
+            (email, password)
+        )
+        return self.cursor.fetchone()
+
+    def save_preference(self, email, remember):
+        self.cursor.execute("DELETE FROM preferences")  # sempre um único registro
+        self.cursor.execute("INSERT INTO preferences (id, email, remember) VALUES (1, ?, ?)",
+                            (email, int(remember)))
+        self.conn.commit()
+
+    def load_preference(self):
+        self.cursor.execute("SELECT email, remember FROM preferences WHERE id=1")
+        return self.cursor.fetchone()
 
 kv = """
 
@@ -296,6 +354,7 @@ ScreenManager:
             height:"40dp"
             pos_hint: {"center_x": 0.5, "center_y": 0.40}
             md_bg_color: (0.5, 0.5, 0.5, 0.9)
+            on_release: app.login()
         
         MDFillRoundFlatButton:
             text: "BACK"
@@ -519,6 +578,7 @@ ScreenManager:
             text_color:"white"
             md_bg_color: (0.5, 0.5, 0.5, 0.9)
             size_hint_x: 1
+            on_release:app.register()
 
         MDFillRoundFlatButton:
             text:"BACK"
@@ -792,7 +852,7 @@ ScreenManager:
         MDTopAppBar:
             title: "Weight Tracking"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menuzao()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             
             md_bg_color: 0, 0.7, 0.5, 1
@@ -1097,7 +1157,7 @@ ScreenManager:
         MDTopAppBar:
             title: "Water Tracking"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menuzao()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             
             md_bg_color: 0, 0.7, 0.5, 1
@@ -1131,7 +1191,7 @@ ScreenManager:
                             rgba: 0.1176, 0.8706, 0.9608, 0.8
                         Line:
                             width: 1.5
-                            rectangle: (self.x, self.y, self.width, self.height)
+                            rounded_rectangle: (self.x, self.y, self.width, self.height, 20)
                             
                     Widget:
                         size_hint_y: None
@@ -1141,10 +1201,10 @@ ScreenManager:
                         orientation: "horizontal"
                         size_hint_y: None
                         pos_hint: {"center_x": .5}
-                        spacing: dp(20)
+                        spacing: dp(30)
                         
                         MDLabel:
-                            text: "Drinking"
+                            text: "Drink"
                             font_size: "20sp" 
                             font_name: "Fontes/Montserrat-Medium.ttf"
                             bold: True
@@ -1345,7 +1405,7 @@ ScreenManager:
         MDTopAppBar:
             title: "Period Tracking"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menuzao()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             
             md_bg_color: 0, 0.7, 0.5, 1
@@ -1473,7 +1533,7 @@ ScreenManager:
         MDTopAppBar:
             title: "Period Tracking"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menuzao()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             md_bg_color: 0, 0.7, 0.5, 1
             specific_text_color: 1, 1, 1, 1
@@ -1501,7 +1561,7 @@ ScreenManager:
                     size_hint: None, None
                     size: dp(140), dp(140)
                     md_bg_color: 0, 0.7, 0.5, 1
-                    on_release: app.change_screen("vitamin")
+                    on_release: app.change_screen("generic")
                     
                     FloatLayout:
                         size_hint_y: None
@@ -1528,7 +1588,7 @@ ScreenManager:
                     size_hint: None, None
                     size: dp(140), dp(140)
                     md_bg_color: 0, 0.7, 0.5, 1
-                    on_release: app.change_screen("generic")
+                    on_release: app.change_screen("vitamin")
                     
                     FloatLayout:
                         size_hint_y: None
@@ -1612,9 +1672,9 @@ ScreenManager:
         md_bg_color: 1, 1, 1, 1
 
         MDTopAppBar:
-            title: "Vitamins"
+            title: "Generic"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menu()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             md_bg_color: 0, 0.7, 0.5, 1
             specific_text_color: 1, 1, 1, 1
@@ -1643,7 +1703,7 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Tylenol", "Used to reduce fever and relieve mild pain", "Medicine/Tylenol.jpg")
 
                     Image:
                         source: "pills.png"
@@ -1655,7 +1715,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Tylenol"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1667,7 +1727,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Tylenol", "Used to reduce fever and relieve mild pain", "Medicine/Tylenol.jpg")
 
 
                 MDCard:
@@ -1680,7 +1740,7 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Bufferin A", "Used for general pain", "Medicine/Bufferin.jpg")
 
                     Image:
                         source: "pills.png"
@@ -1692,7 +1752,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Bufferin A"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1704,7 +1764,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        on_release: app.show_medicine("Bufferin A", "Used for general pain", "Medicine/Bufferin.jpg")   
                         
                 MDCard:
                     orientation: "horizontal"
@@ -1716,7 +1776,7 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Bufferin Premium", "Used for extreme pain", "Medicine/BufferinP.jpg")
 
                     Image:
                         source: "pills.png"
@@ -1728,7 +1788,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Bufferin Premium"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1740,7 +1800,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Bufferin Premium", "Used for extreme pain", "Medicine/BufferinP.jpg")
                         
                 MDCard:
                     orientation: "horizontal"
@@ -1752,7 +1812,7 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Eve", "Used for headache, colic, toothache, fever, cramps", "Medicine/Eve.jpg")
 
                     Image:
                         source: "pills.png"
@@ -1764,7 +1824,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Eve"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1776,7 +1836,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Eve", "Used for headache, colic, toothache, fever, cramps", "Medicine/Eve.jpg")
         
         
 <VitaminsScreen>
@@ -1789,7 +1849,7 @@ ScreenManager:
         MDTopAppBar:
             title: "Vitamins"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menu()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             md_bg_color: 0, 0.7, 0.5, 1
             specific_text_color: 1, 1, 1, 1
@@ -1818,10 +1878,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Vitamin A", "Crucial for healthy vision, immunity, growth, and skin integrity", "Medicine/VitaA.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "vitamin.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -1830,7 +1890,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Vitamin A"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1842,7 +1902,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Vitamin A", "Crucial for healthy vision, immunity, growth, and skin integrity", "Medicine/VitaA.png")
 
 
                 MDCard:
@@ -1855,10 +1915,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Vitamin B12", "Crucial for energy, blood formation, nerve health, and cell function", "Medicine/VitaB.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "vitamin.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -1867,7 +1927,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Vitamin B12"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1879,7 +1939,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        on_release: app.show_medicine("Vitamin B12", "Crucial for energy, blood formation, nerve health, and cell function", "Medicine/VitaB.png")   
                         
                 MDCard:
                     orientation: "horizontal"
@@ -1891,10 +1951,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Vitamina C", "Vital for immunity, skin health, healing, and protection against cell damage.", "Medicine/VitaC.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "vitamin.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -1903,7 +1963,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Vitamin C"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1915,7 +1975,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Vitamin C", "Vital for immunity, skin health, healing, and protection against cell damage.", "Medicine/VitaC.png")
                         
                 MDCard:
                     orientation: "horizontal"
@@ -1927,10 +1987,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Vitamin D", "Essential for strong bones, immunity, and muscle health.", "Medicine/VitaD.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "vitamin.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -1939,7 +1999,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Vitamin D"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -1951,7 +2011,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Vitamin D", "Essential for strong bones, immunity, and muscle health.", "Medicine/VitaD.png")
                         
                         
 <MineralScreen>
@@ -1962,9 +2022,9 @@ ScreenManager:
         md_bg_color: 1, 1, 1, 1
 
         MDTopAppBar:
-            title: "Vitamins"
+            title: "Mineral"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menu()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             md_bg_color: 0, 0.7, 0.5, 1
             specific_text_color: 1, 1, 1, 1
@@ -1993,10 +2053,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Calcium", "Crucial for strong bones, muscle function, nerve health, and heart rhythm", "Medicine/MineCa.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "mineral.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2005,7 +2065,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Calcium(Ca)"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2017,7 +2077,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Calcium", "Crucial for strong bones, muscle function, nerve health, and heart rhythm", "Medicine/MineCa.png")
 
 
                 MDCard:
@@ -2030,10 +2090,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Zinc", "Crucial for immunity, healing, growth, and senses", "Medicine/MineZn.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "mineral.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2042,7 +2102,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Zinc(Zn)"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2054,7 +2114,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        on_release: app.show_medicine("Zinc", "Crucial for immunity, healing, growth, and senses", "Medicine/MineZn.png")   
                         
                 MDCard:
                     orientation: "horizontal"
@@ -2066,10 +2126,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Potassium", "Essential for heart, muscles, nerves, and fluid balance", "Medicine/MineK.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "mineral.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2078,7 +2138,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Potassium(K)"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2090,7 +2150,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Potassium", "Essential for heart, muscles, nerves, and fluid balance", "Medicine/MineK.png")
                         
                 MDCard:
                     orientation: "horizontal"
@@ -2102,10 +2162,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Magnesium", "Vital for energy, muscles, nerves, heart, and bones", "Medicine/MineMg.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "mineral.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2114,7 +2174,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Magnesium(Mg)"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2126,7 +2186,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Magnesium", "Vital for energy, muscles, nerves, heart, and bones", "Medicine/MineMg.png")
                         
                         
 <HomemadeScreen>
@@ -2137,9 +2197,9 @@ ScreenManager:
         md_bg_color: 1, 1, 1, 1
 
         MDTopAppBar:
-            title: "Vitamins"
+            title: "Homemade"
             elevation: 0
-            left_action_items: [["arrow-left", lambda x: app.voltar_menuzao()]]
+            left_action_items: [["arrow-left", lambda x: app.ir_menu()]]
             padding: dp(0), dp(0), dp(45), dp(0) 
             md_bg_color: 0, 0.7, 0.5, 1
             specific_text_color: 1, 1, 1, 1
@@ -2168,10 +2228,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Garlic Honey Syrup", "Natural remedy that supports immunity, heart health, and respiratory relief","Medicine/Home1.jpg")
 
                     Image:
-                        source: "pills.png"
+                        source: "homemade.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2180,7 +2240,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Garlic Honey Syrup"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2192,7 +2252,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Garlic Honey Syrup", "Natural remedy that supports immunity, heart health, and respiratory relief","Medicine/Home1.jpg" )
 
 
                 MDCard:
@@ -2205,10 +2265,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Turmeric Golden Milk", "Helps with inflammation, immunity, heart, brain, and relaxation","Medicine/Home2.png" )
 
                     Image:
-                        source: "pills.png"
+                        source: "homemade.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2217,7 +2277,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Turmeric Golden Milk"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2229,7 +2289,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")   
+                        on_release: app.show_medicine("Turmeric Golden Milk", "Helps with inflammation, immunity, heart, brain, and relaxation","Medicine/Home2.png")  
                         
                 MDCard:
                     orientation: "horizontal"
@@ -2241,10 +2301,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Chamomile Sleep Tea", "Helps with sleep, relaxation, digestion, and gentle immune support","Medicine/Home3.png" )
 
                     Image:
-                        source: "pills.png"
+                        source: "homemade.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2253,7 +2313,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Chamomile Sleep Tea"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2265,7 +2325,7 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Chamomile Sleep Tea", "Helps with sleep, relaxation, digestion, and gentle immune support","Medicine/Home3.png")
                         
                 MDCard:
                     orientation: "horizontal"
@@ -2277,10 +2337,10 @@ ScreenManager:
                     ripple_behavior: True
                     elevation: 1
                     shadow_radius: 15                   
-                    on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                    on_release: app.show_medicine("Ginger Tonic", "Supports digestion, immunity, circulation, and respiratory health", "Medicine/Home4.png")
 
                     Image:
-                        source: "pills.png"
+                        source: "homemade.png"
                         size_hint: None, None
                         size: self.parent.height * 0.3, self.parent.height * 0.3
                         pos_hint: {"center_y": 0.5}
@@ -2289,7 +2349,7 @@ ScreenManager:
                         orientation: "vertical"
                         padding: dp(10), 0
                         MDLabel:
-                            text: "Aspirin"
+                            text: "Ginger Tonic"
                             font_style: "H6"
                             halign: "left"
                             theme_text_color: "Custom"
@@ -2301,8 +2361,9 @@ ScreenManager:
                         size_hint: None, None
                         size: dp(40), dp(40)
                         md_bg_color: 0, 0.7, 0.5, 1
-                        on_release: app.show_medicine("Aspirin", "Usado para dor e inflamação.")
+                        on_release: app.show_medicine("Ginger Tonic", "Supports digestion, immunity, circulation, and respiratory health", "Medicine/Home4.png")
 """
+
 
 class LoginPage(MDApp):
     def build(self):
@@ -2310,9 +2371,15 @@ class LoginPage(MDApp):
         self.theme_cls.primary_palette = "BlueGray"
 
         self.menstrual_days = []
-
+        self.db = Database()
         root = Builder.load_string(kv)
         Clock.schedule_once(self.start_carousel, 0)
+
+        pref = self.db.load_preference()
+        if pref and pref[1] == 1:
+            email_salvo = pref[0]
+            login_screen = root.get_screen("login-form")
+            login_screen.ids.login_email_field.text = email_salvo
 
         return root
 
@@ -2365,9 +2432,12 @@ class LoginPage(MDApp):
         self.root.current = "register-form"
 
     def ir_menuzao(self):
-        self.root.transition = SlideTransition(direction="left")
+        self.root.transition = SlideTransition(direction="right")
         self.root.current = "main-menu"
 
+    def ir_menu(self):
+        self.root.transition = SlideTransition(direction="right")
+        self.root.current = "medications"
 
     def change_screen(self, screen_name):
         self.root.transition = SlideTransition(direction="left")
@@ -2507,30 +2577,68 @@ class LoginPage(MDApp):
 
     dialog = None
 
-    def show_medicine(self, name, description):
-        if not self.dialog:
-            content = BoxLayout(orientation="vertical", spacing=10, padding=10)
+    def show_medicine(self, name, description, image_source):
+        content = BoxLayout(
+            orientation="vertical",
+            spacing=10,
+            padding=10,
+            size_hint_y=None,
+            height = "200dp"
+        )
 
-            self.label_desc = MDLabel(
-                text=description,
-                halign="center",
-                theme_text_color="Secondary"
-            )
-            content.add_widget(self.label_desc)
+        img = Image(
+            source=image_source,
+            size_hint=(1, None),
+            height="120dp",
+            allow_stretch=True,
+            keep_ratio=True
+        )
+        content.add_widget(img)
 
-            self.dialog = MDDialog(
-                title=f"{name}",
-                type="custom",
-                content_cls=content,
-                buttons=[
-                    MDRaisedButton(text="Fechar", on_release=lambda x: self.dialog.dismiss())
-                ]
-            )
+        label_desc = MDLabel(
+            text=description,
+            halign="center",
+            theme_text_color="Secondary"
+        )
+        content.add_widget(label_desc)
+
+        dialog = MDDialog(
+            title=f"{name}",
+            type="custom",
+            content_cls=content,
+            size_hint=(0.9, None),
+            height="350dp",
+            buttons=[
+                MDRaisedButton(text="Fechar", on_release=lambda x: dialog.dismiss())
+            ]
+        )
+        dialog.open()
+
+    def login(self):
+        email = self.root.get_screen("login-form").ids.login_email_field.text
+        senha = self.root.get_screen("login-form").ids.login_password_field.text
+        remember = self.root.get_screen("login-form").ids.remember_check.active
+
+        user = self.db.login_user(email, senha)
+        if user:
+            self.db.save_preference(email, remember)
+            self.root.transition = SlideTransition(direction="left")
+            self.ir_menuzao()
         else:
-            self.dialog.title = f"{name}"
-            self.dialog.content_cls.children[0].text = description
+            print("Invalid Login!")
 
-        self.dialog.open()
+    def register(self):
+        name = self.root.get_screen("register-form").ids.register_name_field.text
+        email = self.root.get_screen("register-form").ids.register_email_field.text
+        phone = self.root.get_screen("register-form").ids.register_phone_field.text
+        password = self.root.get_screen("register-form").ids.register_password_field.text
+
+        ok = self.db.register_user(name, email, phone, password)
+        if ok:
+            print("User registered!")
+            self.root.current = "login-form"
+        else:
+            print("This e-mail already exists!")
 
 
 
